@@ -101,6 +101,8 @@ namespace ProductGrpc.Services
             _productsContext.Product.Add(product);
             await _productsContext.SaveChangesAsync();
 
+            _logger.LogInformation("Product successfully added : {productId}_{productName}", product.ProductId, product.Name);
+
             //var productModel = new ProductModel
             //{
             //    ProductId = product.ProductId,
@@ -110,6 +112,7 @@ namespace ProductGrpc.Services
             //    Status = Protos.ProductStatus.Instock,
             //    CreatedTime = Timestamp.FromDateTime(product.CreatedTime)
             //};
+
 
             //This replacing the above lines because of AutoMapper #CleanCode
             var productModel = _mapper.Map<ProductModel>(product);
@@ -175,7 +178,7 @@ namespace ProductGrpc.Services
                 _productsContext.Product.Add(product);                    
             }
 
-            var insertCount = await _productsContext.SaveChangesAsync();
+            var insertCount = await _productsContext.SaveChangesAsync();            
 
             var response = new InsertBulkProductResponse()
             {
