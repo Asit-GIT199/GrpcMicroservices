@@ -1,42 +1,19 @@
-﻿using DiscountGrpc.Protos;
+﻿using DiscountGrpc.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using ShoppingCartGrpc.Data;
-using ShoppingCartGrpc.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace ShoppingCartGrpc
+namespace DiscountGrpc
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
         // This method gets called by the runtime. Use this method to add services to the container.
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc();
-
-            services.AddDbContext<ShoppingCartContext>(options =>
-                            options.UseInMemoryDatabase("ShoppingCart"));
-
-            services.AddAutoMapper(typeof(Startup));
-            services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>
-                (o => o.Address = new Uri(Configuration["GrpcConfigs:DiscountUrl"]));
-
-            services.AddScoped<DiscountService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -51,7 +28,7 @@ namespace ShoppingCartGrpc
 
             app.UseEndpoints(endpoints =>
             {
-               endpoints.MapGrpcService<ShoppingCartService>();
+                endpoints.MapGrpcService<DiscountService>();
 
                 endpoints.MapGet("/", async context =>
                 {

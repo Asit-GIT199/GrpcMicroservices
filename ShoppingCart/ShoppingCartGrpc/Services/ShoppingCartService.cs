@@ -15,15 +15,16 @@ namespace ShoppingCartGrpc.Services
     public class ShoppingCartService : ShoppingCartProtoService.ShoppingCartProtoServiceBase
     {
         private readonly ShoppingCartContext _shoppingCartDbContext;
-        //private readonly DiscountService _discountService;
+        private readonly DiscountService _discountService;
         private readonly IMapper _mapper;
         private readonly ILogger<ShoppingCartService> _logger;
 
-        public ShoppingCartService(ShoppingCartContext shoppingCartDbContext, ILogger<ShoppingCartService> logger, IMapper mapper)
+        public ShoppingCartService(ShoppingCartContext shoppingCartDbContext, ILogger<ShoppingCartService> logger, IMapper mapper, DiscountService discountService)
         {
             _shoppingCartDbContext = shoppingCartDbContext;
             _logger = logger;
             _mapper = mapper;
+            _discountService = discountService;
         }
 
         public override async Task<ShoppingCartModel> GetShoppingCart(GetShoppingCartRequest request, ServerCallContext context)
@@ -113,8 +114,8 @@ namespace ShoppingCartGrpc.Services
                 else
                 {
                     // GRPC CALL DISCOUNT SERVICE -- check discount and set the item price
-                    //var discount = await _discountService.GetDiscount(requestStream.Current.DiscountCode);
-                    //newAddedCartItem.Price -= discount.Amount;
+                    var discount = await _discountService.GetDiscount(requestStream.Current.DiscountCode);
+                    newAddedCartItem.Price -= discount.Amount;
 
                     shoppingCart.Items.Add(newAddedCartItem);
                 }
